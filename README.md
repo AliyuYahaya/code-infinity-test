@@ -1,8 +1,8 @@
-# User Registration
-
+# This is test 1 and two of the code-infinity-interview
+## Test 1
 A simple user registration system built using MongoDB, Express, and Node.js
 
-## Features
+#### Features
 
 - Client-side form validation
 - Server-side data validation
@@ -10,7 +10,7 @@ A simple user registration system built using MongoDB, Express, and Node.js
 - Real-time error feedback
 - Responsive design using Bootstrap
 
-## Prerequisites
+### Prerequisites
 
 Before running this application, make sure you have the following installed:
 
@@ -18,7 +18,7 @@ Before running this application, make sure you have the following installed:
 - [MongoDB](https://www.mongodb.com/try/download/community) (v4.x or higher)
 - npm (comes with Node.js)
 
-## Installation
+### Installation
 
 1. Clone the repository:
    ```
@@ -46,7 +46,7 @@ Before running this application, make sure you have the following installed:
    http://localhost:3000
    ```
 
-## Project Structure
+### Project Structure
 
 ```
 test1/
@@ -63,27 +63,27 @@ test1/
 └── README.md         # Project documentation
 ```
 
-## API Endpoints
+### API Endpoints
 
 - `POST /api/users` - Create a new user
 - `GET /api/users` - Retrieve all users (for debugging)
 - `DELETE /api/reset-db` - Reset the database (for testing)
 
-## Form Validation
+### Form Validation
 
-### Client-side Validation
+#### Client-side Validation
 
 - **Name & Surname**: Cannot be empty or contain special characters
 - **ID Number**: Must be exactly 13 digits
 - **Date of Birth**: Must be in dd/mm/yyyy format and a valid date
 
-### Server-side Validation
+#### Server-side Validation
 
 - Validates all fields again for security
 - Checks for duplicate IDs in the database
 - Ensures data consistency
 
-## Database Schema
+### Database Schema
 
 ```javascript
 {
@@ -96,7 +96,7 @@ test1/
 }
 ```
 
-## Troubleshooting
+### Troubleshooting
 
 If you encounter any issues with duplicate IDs or validation not working properly:
 
@@ -106,17 +106,17 @@ If you encounter any issues with duplicate IDs or validation not working properl
 4. Ensure MongoDB is running and accessible
 5. Verify that all form fields are correctly formatted
 
-## Development Notes
+### Development Notes
 
 - The system uses RESTful API principles
 - MongoDB's unique index is used to prevent duplicate IDs
 - The server provides detailed error messages for debugging
 - Bootstrap is used for responsive design
 
-## Contributing
+### Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## License
+### License
 
 This project is licensed under the MIT License - see the LICENSE file for details.

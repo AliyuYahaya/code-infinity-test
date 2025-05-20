@@ -135,8 +135,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     // ================================ [EOM] ================================ //
 
-    // ================================ [SUBMIT/POSYT DATA TO MONGODB VIA EXPRESS] ================================ //
+    // ================================ [SUBMIT/POST DATA TO MONGODB VIA EXPRESS] ================================ //
     function submitUser(data) {
+        // Reset previous error state
+        clearErrors();
+        idField.classList.remove('is-invalid');
+        
+        console.log('Submitting user data:', data);
+        
         fetch('/api/users', {
             method: 'POST',
             headers: {
@@ -146,10 +152,12 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .then(res => res.json())
         .then(result => {
+            console.log('Server response:', result);
+            
             if (result.error) {
                 showAlert('danger', result.message);
 
-                if (result.message.includes('ID number already exists')) {
+                if (result.message.includes('That ID number has already been use')) {
                     showError(document.getElementById('idError'), 'ID number already in use');
                     idField.classList.add('is-invalid');
                 }

@@ -19,7 +19,14 @@ mongoose.connect('mongodb://localhost:27017/userFormDB', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
-.then(() => console.log('MongoDB connected'))
+.then(() => {
+  console.log('MongoDB connected');
+  // Drop existing indexes to prevent conflicts
+  return mongoose.connection.db.collection('users').dropIndexes();
+})
+.then(() => {
+  console.log('Indexes reset. System ready.');
+})
 .catch(err => console.error(' MongoDB connection failed:', err.message));
 
 // ================================ [API ROUTES] ================================ //

@@ -1,0 +1,22 @@
+const names = [
+  "James", 
+  "Emma", 
+  "Michael", 
+  "Sophia", 
+  "David", 
+  "Olivia", 
+  "Robert", 
+  "Ava", 
+  "William", 
+  "Isabella", 
+  "Richard", 
+  "Mia", 
+  "Joseph", 
+  "Charlotte", 
+  "Thomas", 
+  "Amelia", 
+  "Daniel", 
+  "Harper", 
+  "Matthew", 
+  "Evelyn"
+];

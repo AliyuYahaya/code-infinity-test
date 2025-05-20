@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ================================ [VALIDATORS FOR INPUT FIELDS] ================================ //
     // ================================ [VALIDATES THAT THERE IS A VALIDE NAME INPUT] ================================ //
-    function validateName() {
+    function validateName()  {
         const inputerdName= nameField.value.trim();
         const error = document.getElementById('nameError');
 

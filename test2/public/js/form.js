@@ -1,124 +1,124 @@
+// ================================ [DOCUMENT READY] ================================ //
 document.addEventListener('DOMContentLoaded', () => {
-    const rowForm = document.getElementById('rowForm');
-    const numOfRowsField = document.getElementById('numOfRows');
-    const submitBtn = document.getElementById('submitBtn');
+    const form = document.getElementById('rowForm');
+    const rowInput = document.getElementById('numOfRows');
+    const generateBtn = document.getElementById('submitBtn');
     const downloadBtn = document.getElementById('download');
     
-    // Initially disable download button until CSV is generated
     downloadBtn.disabled = true;
     
-    // Validate number of rows
-    numOfRowsField.addEventListener('input', validateRows);
+    rowInput.addEventListener('input', checkIfRowCountIsValid);
     
-    // Handle form submission
-    rowForm.addEventListener('submit', e => {
+    // ================================ [FORM SUBMISSION] ================================ //
+    form.addEventListener('submit', e => {
         e.preventDefault();
         
-        if (validateRows()) {
-            generateCSV(numOfRowsField.value.trim());
+        if (checkIfRowCountIsValid()) {
+            makeTheCsv(rowInput.value.trim());
         }
     });
     
-    // Handle download button click
+    // ================================ [DOWNLOAD BUTTON] ================================ //
     downloadBtn.addEventListener('click', () => {
         window.location.href = '/api/download-csv';
     });
     
-    // Validation function
-    function validateRows() {
-        const rowCount = numOfRowsField.value.trim();
-        const error = document.getElementById('rowError');
+    // ================================ [INPUT VALIDATION] ================================ //
+    function checkIfRowCountIsValid() {
+        const userValue = rowInput.value.trim();
+        const errorMsg = document.getElementById('rowError');
         
-        if (!rowCount) {
-            return showError(error, 'A number is required');
+        if (!userValue) {
+            return showProblem(errorMsg, 'Come on, I need a number here!');
         }
         
-        if (isNaN(rowCount) || parseInt(rowCount) <= 0) {
-            return showError(error, 'The number cannot be less than zero');
+        if (isNaN(userValue) || parseInt(userValue) <= 0) {
+            return showProblem(errorMsg, 'Has to be a positive number (like 10, 100, etc)');
         }
         
-        if (parseInt(rowCount) > 1000000) {
-            return showError(error, 'The number cannot be more than 1,000,000');
+        if (parseInt(userValue) > 1000000) {
+            return showProblem(errorMsg, 'Whoa there! Max is 1,000,000 rows. My poor server...');
         }
         
-        hideError(error);
+        hideProblem(errorMsg);
         return true;
     }
     
-    // Error display helper
-    function showError(el, msg) {
-        el.textContent = msg;
-        el.style.display = 'block';
+    // ================================ [ERROR DISPLAY] ================================ //
+    function showProblem(element, message) {
+        element.textContent = message;
+        element.style.display = 'block';
         return false;
     }
     
-    // Hide error helper
-    function hideError(el) {
-        el.style.display = 'none';
+    function hideProblem(element) {
+        element.style.display = 'none';
     }
     
-    // Function to call API and generate CSV
-    function generateCSV(numRows) {
-        // Show loading state
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Generating...';
+    // ================================ [CSV GENERATION] ================================ //
+    function makeTheCsv(howManyRows) {
+        generateBtn.disabled = true;
+        generateBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> Working on it...';
         
         fetch('/api/generate-csv', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ numOfRows: parseInt(numRows) })
+            body: JSON.stringify({ numOfRows: parseInt(howManyRows) })
         })
-        .then(res => res.json())
-        .then(data => {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = 'Generate CSV';
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Server returned an error: ' + response.status);
+            }
+            return response.json();
+        })
+        .then(result => {
+            generateBtn.disabled = false;
+            generateBtn.innerHTML = 'Generate CSV';
             
-            if (data.success) {
-                // Show success message
-                showAlert('success', `Successfully generated and saved ${data.recordCount} records!`);
-                
-                // Enable download button
+            if (result.success) {
+                showNotification('success', `Woohoo! Generated ${result.recordCount} records. Ready to download!`);
                 downloadBtn.disabled = false;
             } else {
-                showAlert('danger', `Error: ${data.message}`);
+                showNotification('danger', `Uh oh: ${result.message}`);
                 downloadBtn.disabled = true;
             }
         })
         .catch(err => {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = 'Generate CSV';
-            showAlert('danger', 'Error connecting to server. Please try again.');
+            console.error('Failed to talk to the server:', err);
+            
+            generateBtn.disabled = false;
+            generateBtn.innerHTML = 'Generate CSV';
+            
+            showNotification('danger', 'Could not connect to the server. Is it running?');
             downloadBtn.disabled = true;
-            console.error('Error:', err);
         });
     }
     
-    // Function to show alerts
-    function showAlert(type, message) {
-        // Remove any existing alerts
-        const existingAlerts = document.querySelectorAll('.alert');
-        existingAlerts.forEach(alert => alert.remove());
+    // ================================ [NOTIFICATIONS] ================================ //
+    function showNotification(style, message) {
+        const oldAlerts = document.querySelectorAll('.alert');
+        oldAlerts.forEach(alert => alert.remove());
         
-        // Create new alert
-        const alertBox = document.createElement('div');
-        alertBox.className = `alert alert-${type} alert-dismissible fade show mt-3`;
-        alertBox.setAttribute('role', 'alert');
-        alertBox.innerHTML = `
+        const alert = document.createElement('div');
+        alert.className = `alert alert-${style} alert-dismissible fade show mt-3`;
+        alert.setAttribute('role', 'alert');
+        
+        alert.innerHTML = `
             ${message}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         `;
         
-        // Insert after form
-        rowForm.parentNode.insertBefore(alertBox, rowForm.nextSibling);
+        form.parentNode.insertBefore(alert, form.nextSibling);
         
-        // Auto dismiss success alerts after 5 seconds
-        if (type === 'success') {
+        if (style === 'success') {
             setTimeout(() => {
-                const bsAlert = bootstrap.Alert.getOrCreateInstance(alertBox);
+                const bsAlert = bootstrap.Alert.getOrCreateInstance(alert);
                 bsAlert.close();
-            }, 5000);
+            }, 4000);
         }
     }
+    
+    // ================================ [END OF SCRIPT] ================================ //
 });

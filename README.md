@@ -1,4 +1,7 @@
-# This is test 1 and two of the code-infinity-interview
+# Code Infinity Interview Tests
+
+This repository contains two separate applications developed as part of the Code Infinity interview process.
+
 ## Test 1
 A simple user registration system built using MongoDB, Express, and Node.js
 
@@ -106,12 +109,99 @@ If you encounter any issues with duplicate IDs or validation not working properl
 4. Ensure MongoDB is running and accessible
 5. Verify that all form fields are correctly formatted
 
-### Development Notes
+## Test 2
+A random data generator application that creates CSV files with customizable row counts, built using Express.js and SQLite.
 
-- The system uses RESTful API principles
-- MongoDB's unique index is used to prevent duplicate IDs
-- The server provides detailed error messages for debugging
-- Bootstrap is used for responsive design
+### Features
+
+- Generate large datasets with random user data
+- Specify the number of rows to generate (up to 1,000,000)
+- Export generated data to CSV files
+- Download generated CSV files
+- Reset database functionality
+- Simple and intuitive UI
+
+### Prerequisites
+
+Before running this application, make sure you have the following installed:
+
+- [Node.js](https://nodejs.org/) (v14.x or higher)
+- npm (comes with Node.js)
+
+### Installation
+
+1. Clone the repository:
+   ```
+   git clone <repository-url>
+   cd test2
+   ```
+
+2. Install dependencies:
+   ```
+   npm install
+   ```
+
+3. Start the server:
+   ```
+   npm start
+   ```
+   
+   For development with auto-restart:
+   ```
+   npm run dev
+   ```
+
+4. Open your browser and navigate to:
+   ```
+   http://localhost:3000
+   ```
+
+### Project Structure
+
+```
+test2/
+├── public/             # Static assets
+│   ├── css/            # Stylesheets
+│   ├── js/             # Client-side JavaScript
+│   │   └── form.js     # UI interactions and validation
+│   └── index.html      # Main UI
+├── src/                # Server-side source code
+│   ├── database/       # Database operations
+│   │   └── actionsDB.js # Database interaction functions
+│   ├── outputs/        # Generated CSV files
+│   └── utils/          # Utility functions
+│       └── generateData.js # Random data generation
+├── server.js           # Express server setup
+├── database.sqlite     # SQLite database file
+└── package.json        # Project dependencies
+```
+
+### API Endpoints
+
+- `GET /api/test` - Check if API is working
+- `POST /api/generate-csv` - Generate CSV data with specified row count
+- `GET /api/download-csv` - Download the generated CSV file
+- `DELETE /api/reset-db` - Reset the database (for testing)
+
+### Data Generation
+
+The application generates random user data including:
+- Names
+- IDs
+- Dates of birth
+- And other user-related information
+
+### CSV Export
+
+Generated data is:
+1. First saved to an SQLite database
+2. Then exported to a CSV file
+3. Made available for download through the UI
+
+### Limitations
+
+- Maximum row count is limited to 1,000,000 to prevent server overload
+- Only positive integers are accepted as row counts
 
 ### Contributing
 
@@ -120,3 +210,13 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ### License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+### Attributions
+
+Some code in this project is based on or inspired by examples from:
+- GitHub repositories and forms
+- Stack Overflow discussions
+- W3Schools examples
+- GeeksforGeeks tutorials
+
+These resources provided valuable reference and learning material during development.

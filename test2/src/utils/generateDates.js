@@ -1,34 +1,39 @@
-// to generate a random age
-getRandomAge = () => {
-  return Math.floor(Math.random() * 91) + 18;
+// ================================ [IMPORTS] ================================ //
+const { MIN_AGE, MAX_AGE } = require('./constants');
+
+// ================================ [AGE GENERATION] ================================ //
+const getRandomAge = () => {
+  const ageRange = MAX_AGE - MIN_AGE + 1;
+  return Math.floor(Math.random() * ageRange) + MIN_AGE;
 }
 
-// to generate a random birth date based on age
-getRandomBirthDate = (age) => {
+// ================================ [BIRTH DATE GENERATION] ================================ //
+const getRandomBirthDate = (age) => {
   const today = new Date();
-  const birthYear = today.getFullYear() - age;
   
-  // Random month (0-11)
-  const month = Math.floor(Math.random() * 12);
+  const yearOfBirth = today.getFullYear() - age;
   
-  // Random day (1-28 to avoid invalid dates)
-  const day = Math.floor(Math.random() * 28) + 1;
+  const birthMonth = Math.floor(Math.random() * 12);
   
-  const birthDate = new Date(birthYear, month, day);
+  const birthDay = Math.floor(Math.random() * 28) + 1;
   
-  // Format as DD/MM/YYYY
-  return formatDate(birthDate);
+  const birthDate = new Date(yearOfBirth, birthMonth, birthDay);
+  
+  return formatAsDateString(birthDate);
 }
 
-// Helper to format date as DD/MM/YYYY
-formatDate = (date) => {
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
+// ================================ [DATE FORMATTING] ================================ //
+const formatAsDateString = (date) => {
+  const day = date.getDate().toString().padStart(2, '0');
+  
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  
   const year = date.getFullYear();
   
   return `${day}/${month}/${year}`;
 }
 
+// ================================ [MODULE EXPORTS] ================================ //
 module.exports = {
   getRandomAge,
   getRandomBirthDate

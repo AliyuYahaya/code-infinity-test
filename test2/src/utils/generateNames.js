@@ -1,22 +1,26 @@
-const { NAMES, SURNAMES } = require('./constants');
+// ================================ [IMPORTS] ================================ //
+const { FIRST_NAMES, LAST_NAMES } = require('./constants');
 
-
-generateName = () => {
-    randomIndex =  Math.floor(Math.random() * NAMES.length);
-    return NAMES[randomIndex];
+// ================================ [NAME GENERATION] ================================ //
+const generateName = () => {
+    const randomIndex = Math.floor(Math.random() * FIRST_NAMES.length);
+    return FIRST_NAMES[randomIndex];
 }
 
-generateSurname = () => {
-    randomIndex =  Math.floor(Math.random() * SURNAMES.length);
-    return NAMES[randomIndex];
+// ================================ [SURNAME GENERATION] ================================ //
+const generateSurname = () => {
+    const randomIndex = Math.floor(Math.random() * LAST_NAMES.length);
+    return LAST_NAMES[randomIndex];
 }
 
-generateInitialsFromNames = (name, surname) => {
-  return name.charAt(0) + surname.charAt(0);
+// ================================ [INITIALS GENERATION] ================================ //
+const generateInitialsFromNames = (firstName, lastName) => {
+  return firstName.charAt(0) + lastName.charAt(0);
 }
 
+// ================================ [MODULE EXPORTS] ================================ //
 module.exports = {
-  getRandomName,
-  getRandomSurname,
-  generateInitials
+  generateName,
+  generateSurname,
+  generateInitialsFromNames
 };

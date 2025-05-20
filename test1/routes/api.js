@@ -5,10 +5,10 @@ const User = require('../models/User');
 // ================================ [POST METHOD] ================================ //
 router.post('/users', async (req, res) => {
   try {
-    const { IdNum } = req.body;
+    const { id } = req.body;
 
-    // ================================ [CHECKS DB IF IDNUM IS PRESENT ALREADY] ================================ //
-    const existing = await User.findOne({ IdNum });
+    // ================================ [CHECKS DB IF id IS PRESENT ALREADY] ================================ //
+    const existing = await User.findOne({ id });
     if (existing) {
       return res.status(400).json({
         error: true,

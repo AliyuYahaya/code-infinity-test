@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Surname is required'],
     trim: true
   },
-  idNumber: {
+  id: {
     type: String,
     required: true,
     unique: true,

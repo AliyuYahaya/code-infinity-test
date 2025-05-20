@@ -2,15 +2,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('userForm');
     const nameField = document.getElementById('name');
     const surnameField = document.getElementById('surname');
-    const idField = document.getElementById('idNumber');
+    const idField = document.getElementById('id');
     const dobField = document.getElementById('dateOfBirth');
 
-    // Hook up real-time validation
     nameField.addEventListener('input', validateName);
     surnameField.addEventListener('input', validateSurname);
     idField.addEventListener('input', validateIdNumber);
     dobField.addEventListener('input', validateDOB);
 
+    // ================================ [SUBMIT FORM] ================================ //
     form.addEventListener('submit', e => {
         e.preventDefault();
 
@@ -25,63 +25,76 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = {
                 name: nameField.value.trim(),
                 surname: surnameField.value.trim(),
-                idNumber: idField.value.trim(),
+                id: idField.value.trim(),
                 dateOfBirth: dobField.value.trim()
             };
 
             submitUser(data);
         }
     });
+    // ================================ [EOM] ================================ //
 
+
+    // ================================ [CANCEL AND RESET FORM] ================================ //
     document.getElementById('cancelBtn').addEventListener('click', () => {
         form.reset();
         clearErrors();
     });
+    // ================================ [EOM] ================================ //
 
+
+    // ================================ [VALIDATORS FOR INPUT FIELDS] ================================ //
+    // ================================ [VALIDATES THAT THERE IS A VALIDE NAME INPUT] ================================ //
     function validateName() {
-        const inputValue= nameField.value.trim();
+        const inputerdName= nameField.value.trim();
         const error = document.getElementById('nameError');
 
-        if (!inputValue) return showError(error, 'Please enter a name');
-        if (/[<>\/\\&;:#@]/.test(inputValue)) return showError(error, 'Invalid characters in name');
+        if (!inputerdName) return showError(error, 'Please enter a name');
+        if (/[<>\/\\&;:#@]/.test(inputerdName)) return showError(error, 'Invalid characters in name');
 
         hideError(error);
         return true;
     }
+    // ================================ [EOM] ================================ //
 
+    // ================================ [VALIDATES THAT THERE IS A VALID SURNAME INPUT] ================================ //
     function validateSurname() {
-        const inputValue= surnameField.value.trim();
+        const inputedSurn= surnameField.value.trim();
         const error = document.getElementById('surnameError');
 
-        if (!inputValue) return showError(error, 'Please enter a surname');
-        if (/[<>\/\\&;:#@]/.test(inputValue)) return showError(error, 'Invalid characters in surname');
+        if (!inputedSurn) return showError(error, 'Please enter a surname');
+        if (/[<>\/\\&;:#@]/.test(inputedSurn)) return showError(error, 'Invalid character(s) in surname');
 
         hideError(error);
         return true;
     }
+    // ================================ [EOM] ================================ //
 
+    // ================================ [VALIDATES THAT THERE IS A VALID ID INPUT] ================================ //
     function validateIdNumber() {
-        const inputValue= idField.value.trim();
-        const error = document.getElementById('idNumberError');
+        const inputedIdNum= idField.value.trim();
+        const error = document.getElementById('idError');
 
-        if (!inputValue|| inputValue.length !== 13 || isNaN(inputValue)) {
-            return showError(error, 'ID should be 13 numeric digits');
+        if (!inputedIdNum|| inputedIdNum.length !== 13 || isNaN(inputedIdNum)) {
+            return showError(error, 'ID should be exactly 13 numbers');
         }
 
         hideError(error);
         return true;
     }
+    // ================================ [EOM] ================================ //
 
+    // ================================ [METHOD VALIDATENAME: VALIDATES THAT THERE IS A VALID DATE INPUT] ================================ //
     function validateDOB() {
-        const inputValue= dobField.value.trim();
+        const inputedDate= dobField.value.trim();
         const error = document.getElementById('dateOfBirthError');
 
-        const parts = val.split('/');
-        if (parts.length !== 3) {
+        const partsOfDate = inputedDate.split('/');
+        if (partsOfDate.length !== 3) {
             return showError(error, 'Use format dd/mm/yyyy');
         }
 
-        const [day, month, year] = parts.map(Number);
+        const [day, month, year] = partsOfDate.map(Number);
         const date = new Date(year, month - 1, day);
 
         if (
@@ -90,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
             date.getMonth() !== month - 1 ||
             date.getDate() !== day
         ) {
-            return showError(error, 'Not a valid date');
+            return showError(error, 'invalid date,, try again');
         }
 
         if (date > new Date()) return showError(error, 'Date cannot be in the future');
@@ -98,22 +111,31 @@ document.addEventListener('DOMContentLoaded', () => {
         hideError(error);
         return true;
     }
+    // ================================ [EOM] ================================ //
+    // ================================ [VALIDATIONS DONE] ================================ //
 
 
+    // ================================ [ERROR MESSAGE RENDERING IN DOM] ================================ //
     function showError(el, msg) {
         el.textContent = msg;
         el.style.display = 'block';
         return false;
     }
+    // ================================ [EOM] ================================ //
 
+    // ================================ [HIDE ERROR MESSAGE] ================================ //
     function hideError(el) {
         el.style.display = 'none';
     }
+    // ================================ [EOM] ================================ //
 
+    // ================================ [CLEAR ERROR MESSAGES] ================================ //
     function clearErrors() {
         document.querySelectorAll('.error').forEach(el => el.style.display = 'none');
     }
+    // ================================ [EOM] ================================ //
 
+    // ================================ [SUBMIT/POSYT DATA TO MONGODB VIA EXPRESS] ================================ //
     function submitUser(data) {
         fetch('/api/users', {
             method: 'POST',
@@ -128,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 showAlert('danger', result.message);
 
                 if (result.message.includes('ID number already exists')) {
-                    showError(document.getElementById('idNumberError'), 'ID number already in use');
+                    showError(document.getElementById('idError'), 'ID number already in use');
                     idField.classList.add('is-invalid');
                 }
 
@@ -143,7 +165,9 @@ document.addEventListener('DOMContentLoaded', () => {
             showAlert('danger', 'Something went wrong. Please try again.');
         });
     }
+    // ================================ [EOM] ================================ //
 
+    // ================================ [ALERT MESSAGE FOR POST ACTIONS] ================================ //
     function showAlert(type, message) {
         const alertBox = document.createElement('div');
         alertBox.className = `alert alert-${type} alert-dismissible fade show`;
@@ -158,5 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const bsAlert = bootstrap.Alert.getOrCreateInstance(alertBox);
             bsAlert.close();
         }, type === 'success' ? 3000 : 5000);
-    }
+    }    
+    // ================================ [EOM] ================================ //
 });
+// ================================ [EOF] ================================ //

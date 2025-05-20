@@ -36,11 +36,6 @@ generateData = (numOfRows) => {
             data.push(record);
             id++;
         }
-        // 2. Create a unique key from the combination of fields
-        // 3. Check if it's unique (using the Set)
-        // 4. If unique, add to data array
-        // 5. Increment ID
-        id ++
     }
 
     return data;

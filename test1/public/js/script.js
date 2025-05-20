@@ -1,220 +1,162 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('userForm');
-    const nameInput = document.getElementById('name');
-    const surnameInput = document.getElementById('surname');
-    const idNumberInput = document.getElementById('idNumber');
-    const dateOfBirthInput = document.getElementById('dateOfBirth');
-    
-    // Add event listeners for form validation
-    nameInput.addEventListener('input', validateName);
-    surnameInput.addEventListener('input', validateSurname);
-    idNumberInput.addEventListener('input', validateIdNumber);
-    dateOfBirthInput.addEventListener('input', validateDateOfBirth);
-    
-    // Form submission handler
-    form.addEventListener('submit', function(e) {
+    const nameField = document.getElementById('name');
+    const surnameField = document.getElementById('surname');
+    const idField = document.getElementById('idNumber');
+    const dobField = document.getElementById('dateOfBirth');
+
+    // Hook up real-time validation
+    nameField.addEventListener('input', validateName);
+    surnameField.addEventListener('input', validateSurname);
+    idField.addEventListener('input', validateIdNumber);
+    dobField.addEventListener('input', validateDOB);
+
+    form.addEventListener('submit', e => {
         e.preventDefault();
-        
-        // Validate all fields
-        const isNameValid = validateName();
-        const isSurnameValid = validateSurname();
-        const isIdNumberValid = validateIdNumber();
-        const isDateOfBirthValid = validateDateOfBirth();
-        
-        if (isNameValid && isSurnameValid && isIdNumberValid && isDateOfBirthValid) {
-            const userData = {
-                name: nameInput.value.trim(),
-                surname: surnameInput.value.trim(),
-                idNumber: idNumberInput.value.trim(),
-                dateOfBirth: dateOfBirthInput.value.trim()
+
+        const isValid = [
+            validateName(),
+            validateSurname(),
+            validateIdNumber(),
+            validateDOB()
+        ].every(Boolean);
+
+        if (isValid) {
+            const data = {
+                name: nameField.value.trim(),
+                surname: surnameField.value.trim(),
+                idNumber: idField.value.trim(),
+                dateOfBirth: dobField.value.trim()
             };
-            
-            submitForm(userData);
+
+            submitUser(data);
         }
     });
-    
-    // Cancel button handler
-    document.getElementById('cancelBtn').addEventListener('click', function() {
+
+    document.getElementById('cancelBtn').addEventListener('click', () => {
         form.reset();
-        hideAllErrors();
+        clearErrors();
     });
-    
-    // Field validation functions
+
     function validateName() {
-        const name = nameInput.value.trim();
-        const errorElement = document.getElementById('nameError');
-        
-        if (!name) {
-            showError(errorElement, 'Name is required');
-            return false;
-        }
-        
-        // Check for invalid characters
-        if (/[<>\/\\&;:#@]/.test(name)) {
-            showError(errorElement, 'Name contains invalid characters');
-            return false;
-        }
-        
-        hideError(errorElement);
+        const inputValue= nameField.value.trim();
+        const error = document.getElementById('nameError');
+
+        if (!inputValue) return showError(error, 'Please enter a name');
+        if (/[<>\/\\&;:#@]/.test(inputValue)) return showError(error, 'Invalid characters in name');
+
+        hideError(error);
         return true;
     }
-    
+
     function validateSurname() {
-        const surname = surnameInput.value.trim();
-        const errorElement = document.getElementById('surnameError');
-        
-        if (!surname) {
-            showError(errorElement, 'Surname is required');
-            return false;
-        }
-        
-        // Check for invalid characters
-        if (/[<>\/\\&;:#@]/.test(surname)) {
-            showError(errorElement, 'Surname contains invalid characters');
-            return false;
-        }
-        
-        hideError(errorElement);
+        const inputValue= surnameField.value.trim();
+        const error = document.getElementById('surnameError');
+
+        if (!inputValue) return showError(error, 'Please enter a surname');
+        if (/[<>\/\\&;:#@]/.test(inputValue)) return showError(error, 'Invalid characters in surname');
+
+        hideError(error);
         return true;
     }
-    
+
     function validateIdNumber() {
-        const idNumber = idNumberInput.value.trim();
-        const errorElement = document.getElementById('idNumberError');
-        
-        if (!/^\d{13}$/.test(idNumber)) {
-            showError(errorElement, 'ID Number must be exactly 13 digits');
-            return false;
+        const inputValue= idField.value.trim();
+        const error = document.getElementById('idNumberError');
+
+        if (!inputValue|| inputValue.length !== 13 || isNaN(inputValue)) {
+            return showError(error, 'ID should be 13 numeric digits');
         }
-        
-        hideError(errorElement);
+
+        hideError(error);
         return true;
     }
-    
-    function validateDateOfBirth() {
-        const dateOfBirth = dateOfBirthInput.value.trim();
-        const errorElement = document.getElementById('dateOfBirthError');
-        
-        if (!/^\d{2}\/\d{2}\/\d{4}$/.test(dateOfBirth)) {
-            showError(errorElement, 'Date must be in format dd/mm/yyyy');
-            return false;
+
+    function validateDOB() {
+        const inputValue= dobField.value.trim();
+        const error = document.getElementById('dateOfBirthError');
+
+        const parts = val.split('/');
+        if (parts.length !== 3) {
+            return showError(error, 'Use format dd/mm/yyyy');
         }
-        
-        // Additional date validation
-        const parts = dateOfBirth.split('/');
-        const day = parseInt(parts[0], 10);
-        const month = parseInt(parts[1], 10) - 1; // Month is 0-indexed in JS Date
-        const year = parseInt(parts[2], 10);
-        
-        const date = new Date(year, month, day);
-        
-        // Check if the date is valid
-        if (date.getDate() !== day || 
-            date.getMonth() !== month || 
-            date.getFullYear() !== year) {
-            showError(errorElement, 'Invalid date value');
-            return false;
+
+        const [day, month, year] = parts.map(Number);
+        const date = new Date(year, month - 1, day);
+
+        if (
+            isNaN(day) || isNaN(month) || isNaN(year) ||
+            date.getFullYear() !== year ||
+            date.getMonth() !== month - 1 ||
+            date.getDate() !== day
+        ) {
+            return showError(error, 'Not a valid date');
         }
-        
-        // Check for future dates
-        if (date > new Date()) {
-            showError(errorElement, 'Date cannot be in the future');
-            return false;
-        }
-        
-        hideError(errorElement);
+
+        if (date > new Date()) return showError(error, 'Date cannot be in the future');
+
+        hideError(error);
         return true;
     }
-    
-    // Helper functions for showing/hiding error messages
-    function showError(element, message) {
-        element.textContent = message;
-        element.style.display = 'block';
+
+
+    function showError(el, msg) {
+        el.textContent = msg;
+        el.style.display = 'block';
+        return false;
     }
-    
-    function hideError(element) {
-        element.style.display = 'none';
+
+    function hideError(el) {
+        el.style.display = 'none';
     }
-    
-    function hideAllErrors() {
-        const errors = document.querySelectorAll('.error');
-        errors.forEach(error => {
-            error.style.display = 'none';
-        });
+
+    function clearErrors() {
+        document.querySelectorAll('.error').forEach(el => el.style.display = 'none');
     }
-    
-    // Function to submit form data to backend
-    function submitForm(userData) {
+
+    function submitUser(data) {
         fetch('/api/users', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(userData)
+            body: JSON.stringify(data)
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                // Use Bootstrap toast or alert instead of native alert
-                const alertPlaceholder = document.createElement('div');
-                alertPlaceholder.className = 'alert alert-danger alert-dismissible fade show';
-                alertPlaceholder.setAttribute('role', 'alert');
-                alertPlaceholder.innerHTML = `
-                    ${data.message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                `;
-                
-                form.parentNode.insertBefore(alertPlaceholder, form);
-                
-                // Auto dismiss after 5 seconds
-                setTimeout(() => {
-                    const bsAlert = new bootstrap.Alert(alertPlaceholder);
-                    bsAlert.close();
-                }, 5000);
-                
-                if (data.message.includes('ID number already exists')) {
-                    // Highlight the ID field if duplicate
-                    const errorElement = document.getElementById('idNumberError');
-                    showError(errorElement, 'This ID Number already exists in the database');
-                    idNumberInput.classList.add('is-invalid');
+        .then(res => res.json())
+        .then(result => {
+            if (result.error) {
+                showAlert('danger', result.message);
+
+                if (result.message.includes('ID number already exists')) {
+                    showError(document.getElementById('idNumberError'), 'ID number already in use');
+                    idField.classList.add('is-invalid');
                 }
+
             } else {
-                // Success message
-                const alertPlaceholder = document.createElement('div');
-                alertPlaceholder.className = 'alert alert-success alert-dismissible fade show';
-                alertPlaceholder.setAttribute('role', 'alert');
-                alertPlaceholder.innerHTML = `
-                    User data saved successfully!
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                `;
-                
-                form.parentNode.insertBefore(alertPlaceholder, form);
-                
-                // Auto dismiss after 3 seconds
-                setTimeout(() => {
-                    const bsAlert = new bootstrap.Alert(alertPlaceholder);
-                    bsAlert.close();
-                }, 3000);
-                
+                showAlert('success', 'User data saved!');
                 form.reset();
-                hideAllErrors();
-                
+                clearErrors();
             }
         })
-        .catch(error => {
-            console.error('Error:', error);
-            
-            // Error alert
-            const alertPlaceholder = document.createElement('div');
-            alertPlaceholder.className = 'alert alert-danger alert-dismissible fade show';
-            alertPlaceholder.setAttribute('role', 'alert');
-            alertPlaceholder.innerHTML = `
-                An error occurred while saving the data.
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            `;
-            
-            form.parentNode.insertBefore(alertPlaceholder, form);
+        .catch(err => {
+            console.error('Form submission failed:', err);
+            showAlert('danger', 'Something went wrong. Please try again.');
         });
     }
-    
+
+    function showAlert(type, message) {
+        const alertBox = document.createElement('div');
+        alertBox.className = `alert alert-${type} alert-dismissible fade show`;
+        alertBox.setAttribute('role', 'alert');
+        alertBox.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        form.parentNode.insertBefore(alertBox, form);
+
+        setTimeout(() => {
+            const bsAlert = bootstrap.Alert.getOrCreateInstance(alertBox);
+            bsAlert.close();
+        }, type === 'success' ? 3000 : 5000);
+    }
 });
